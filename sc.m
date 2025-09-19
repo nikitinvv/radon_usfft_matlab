@@ -1,4 +1,3 @@
-addpath('mex');
 N=256;Ntheta=180;
 f=phantom(N);
 theta=(0:Ntheta-1)/Ntheta*pi;

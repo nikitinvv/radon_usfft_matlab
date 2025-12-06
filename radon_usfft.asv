@@ -1,6 +1,7 @@
 function R=radon_usfft(f,theta,epsilon)
 N=size(f,1);
 Ntheta=size(theta,2);
+
 %circ support
 [xx,yy]=ndgrid((-N/2:N/2-1),(-N/2:N/2-1));
 circ=(2/N*xx).^2+(2/N*yy).^2<1-1/N;
@@ -9,8 +10,8 @@ f=f.*circ;
 rho=(-N/2:N/2-1)'/N;
 x=rho*cos(theta);
 y=rho*sin(theta);
-x(find(x>=0.5))=0.5-1e-8;%border control
-y(find(y>=0.5))=0.5-1e-8;
+x(find(x>=0.5))=0.5-epsilon;%border control
+y(find(y>=0.5))=0.5-epsilon;
 
 
 %parameters for usfft
@@ -44,6 +45,26 @@ for i1=0:2*M
     end
 end
 
+
+[xeq,yeq] = meshgrid(-N/2:N/2-1);
+Fs=zeros(size(x));
+for j0=1:Ntheta
+    for j1=1:N
+        Fs(j1,j0) = Fs(j1,j0)+sum(sum(f .* exp(-2*pi*1j*(yeq*y(j1,j0)+xeq*x(j1,j0)))));        
+    end
+end
+
+
+%plot(real(F(:)));hold on;
+%plot(real(Fs(:)));
+
+norm(F,'fro')
+norm(Fs,'fro')
+norm(F-Fs,'fro')
+
 %IFFT1D
 R=fftshift(ifft(ifftshift(F)));
 
+figure(1);imagesc(real(fftshift(ifft(ifftshift(F)))))
+figure(2);imagesc(real(fftshift(ifft(ifftshift(Fs)))))
+keyboard

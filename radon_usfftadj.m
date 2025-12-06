@@ -14,8 +14,8 @@ if(filter==1)%paganin filter
     F=F.*abs(rho).*(.54 + .46 * cos(pi*rho./0.5))*pi/numel(theta);%step in angles
 end
 %scatter
-x(find(x>=0.5))=0.5-epsilon;%border control
-y(find(y>=0.5))=0.5-epsilon;
+x(find(x>=0.5))=0.5-1e-8;%border control
+y(find(y>=0.5))=0.5-1e-8;
 Fee=zeros(2*N+2*M,2*N+2*M);
 for i1=0:2*M
     ell1=floor(2*N*y)-M+i1;

@@ -1,0 +1,33 @@
+N=256;Ntheta=N/4;
+f=phantom(N);
+theta=(0:Ntheta-1)/Ntheta*pi;
+epsilon=1e-12;%usfft accuracy
+
+data=radon_usfft(u,theta,epsilon,1); %%% os = 1
+
+minf=@(Ru,d)norm(Ru - d)^2;
+R=@(f)radon_usfft(f,theta,epsilon,1);
+RT=@(g)radon_usfftadj(g,theta,epsilon,1);
+
+
+u = cp.zeros([d.shape[0], self.n, self.n], dtype="float32")
+        Ru = self.R(u)#.astype("float64")
+        tmp = cp.empty_like(d)
+        for k in range(niter):
+            tmp = 2 * (Ru - d)
+            grad = self.RT(tmp)#.astype("float64")
+            Rgrad = self.R(grad)#.astype("float64")
+            if k == 0:
+                eta = -grad
+                Reta = -Rgrad
+            else:
+                beta = redot(Rgrad, Reta) / redot(Reta, Reta)
+                eta = beta * eta - grad
+                Reta = beta * Reta - Rgrad
+            alpha = -redot(grad, eta) / (2 * redot(Reta, Reta))
+            u += alpha * eta
+            Ru += alpha * Reta
+            if k % 128 == 0:
+                print(minf(Ru, d))
+
+        return u
